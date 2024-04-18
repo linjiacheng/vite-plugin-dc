@@ -20,7 +20,9 @@ const emit = defineEmits(['on-viewer-created']);
 
 const cesiumRef = inject(CESIUM_REF_KEY);
 
-const initViewer = () => {
+const initViewer = async () => {
+  await DC.ready();
+
   const viewer = new DC.Viewer(props.mapId, props.options || {});
   if (!cesiumRef) {
     throw new Error('No cesium reference exist.');
@@ -30,11 +32,9 @@ const initViewer = () => {
   return viewer;
 }
 
-onMounted(() => {
-  DC.ready().then(() => {
-    const viewer = initViewer();
-    emit('on-viewer-created', viewer);
-  });
+onMounted(async () => {
+  const viewer = await initViewer();
+  emit('on-viewer-created', viewer);
 });
 
 onUnmounted(() => {
